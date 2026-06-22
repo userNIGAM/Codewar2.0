@@ -1,0 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Outfit', var(--font-sans);
+  --font-mono: 'JetBrains Mono', var(--font-mono);
+  
+  --animate-scan: scan 8s linear infinite;
+  --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-grid-drift: grid-drift 24s linear infinite;
+  --animate-radar: radar 4s ease-out infinite;
+
+  @keyframes scan {
+    0% { transform: translateY(0vh); }
+    100% { transform: translateY(100vh); }
+  }
+  @keyframes grid-drift {
+    0% { background-position: 0px 0px; }
+    100% { background-position: 0px 100px; }
+  }
+  @keyframes radar {
+    0% { transform: scale(0.9); opacity: 0.8; }
+    100% { transform: scale(1.6); opacity: 0; }
+  }
+}
+
+:root {
+  color-scheme: dark;
+  background-color: #030712; /* Slate/gray-950 dark background */
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  font-family: 'Outfit', sans-serif;
+}
+
+#root {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* Custom glow utility classes */
+.text-neon-cyan {
+  text-shadow: 0 0 10px rgba(34, 211, 238, 0.3), 0 0 20px rgba(34, 211, 238, 0.15);
+}
+
+.text-neon-purple {
+  text-shadow: 0 0 10px rgba(168, 85, 247, 0.3), 0 0 20px rgba(168, 85, 247, 0.15);
+}
+
+.box-neon-cyan {
+  box-shadow: 0 0 20px rgba(34, 211, 238, 0.15), inset 0 0 15px rgba(34, 211, 238, 0.05);
+}
+
+.box-neon-purple {
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.15), inset 0 0 15px rgba(168, 85, 247, 0.05);
+}
+
+/* Glassmorphism custom styling */
+.glass-panel {
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
