@@ -43,21 +43,26 @@ function App() {
 
       <Header onRegisterClick={() => setIsRegModalOpen(true)} />
 
-      <main className="relative z-10 grow w-full max-w-7xl mx-auto px-6 flex flex-col justify-center py-8 lg:py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-          <Hero onRegisterClick={() => setIsRegModalOpen(true)} />
+      <main className="relative z-10 w-full">
+        {/* Hero Section */}
+        <section className="min-h-screen flex items-center justify-center px-6 max-w-7xl mx-auto">
+          <div className="w-full max-w-8xl">
+            <Hero onRegisterClick={() => setIsRegModalOpen(true)} />
+          </div>
+        </section>
 
-          <EventCard logs={logs} />
-        </div>
-       
-        <CountdownTimer targetDate={targetDate} />
-         <div className="mt-24">
-          <EventTimeline />
-         </div>
-         <div className="mt-4">
-          <AwardsSection />
-         </div>
-         <OrganizerSection />
+        {/* Remaining Content */}
+        <section className="max-w-7xl mx-auto px-6 py-16">
+          <CountdownTimer targetDate={targetDate} />
+
+          <div className="mt-24">{/* <EventTimeline /> */}</div>
+
+          <div className="mt-4">
+            <AwardsSection />
+          </div>
+
+          <OrganizerSection />
+        </section>
       </main>
 
       <Footer />
