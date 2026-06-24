@@ -13,11 +13,15 @@ export const floatingCodeSnippets = [
   "q.push({dist[v], v});"
 ];
 
-export const backgroundParticles = Array.from({ length: 18 }, (_, i) => ({
-  id: i,
-  size: Math.random() * 5 + 2,
-  left: Math.random() * 100,
-  top: Math.random() * 100,
-  duration: Math.random() * 15 + 10,
-  delay: Math.random() * 5
-}));
+export const backgroundParticles = Array.from(
+  { length: 18 },
+  (_, i) => ({
+    id: i,
+    size: Math.random() * 5 + 2,
+    left: Math.random() * 100,
+    top: Math.random() * 100,
+    duration: Math.random() * 15 + 10,
+    delay: Math.random() * 5,
+    driftX: Math.random() * 40 - 20,
+  })
+);
