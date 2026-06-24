@@ -55,7 +55,9 @@ function App() {
         <section className="max-w-7xl mx-auto px-6 py-16">
           <CountdownTimer targetDate={targetDate} />
 
-          <div className="mt-24">{/* <EventTimeline /> */}</div>
+          <div className="mt-24">
+            <EventTimeline />
+            </div>
 
           <div className="mt-4">
             <AwardsSection />
