@@ -1,6 +1,5 @@
 import { useState, useMemo } from "react";
 import { AnimatePresence } from "framer-motion";
-
 import "./index.css";
 
 import {
@@ -17,6 +16,10 @@ import useTerminalLogs from "./hooks/useTerminalLogs";
 import EventTimeline from "./components/layout/EventTimeline";
 import AwardsSection from "./components/layout/AwardsSection";
 import OrganizerSection from "./components/layout/OrganizerSection";
+import TeamSection from "./components/layout/TeamSection";
+import SponsorsSection from "./components/layout/SponsorsSection";
+import PoweredBySection from "./components/layout/PoweredBySection";
+import SupportedBySection from "./components/layout/SupportedBySection";
 
 function App() {
   const logs = useTerminalLogs();
@@ -64,6 +67,10 @@ function App() {
           </div>
 
           <OrganizerSection />
+          <TeamSection />
+          <SponsorsSection />
+          <PoweredBySection />
+          <SupportedBySection />
         </section>
       </main>
 
