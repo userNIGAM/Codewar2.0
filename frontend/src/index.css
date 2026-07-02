@@ -81,3 +81,7 @@ body {
   opacity: 1;
   transform: scale(1.08);
 }
+
+.swiper-button-disabled {
+  opacity: 0.3;
+}
