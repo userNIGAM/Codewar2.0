@@ -1,63 +1,69 @@
-import { Sponser } from "../models/sponsor.model.js";
+import fs from "fs";
+import cloudinary from "../config/cloudinary.js";
+import { Sponsor } from "../models/sponsor.model.js";
 
-/**
- * @desc Create Sponsor
- * @route POST /api/sponsors
- */
+/* ---------------- CREATE ---------------- */
+
 export const createSponsor = async (req, res) => {
+
     try {
+
         const { title, salutation } = req.body;
 
-        if (!title || title.trim().length < 3 || title.trim().length > 30) {
+        if (!title || !salutation)
             return res.status(400).json({
                 success: false,
-                message: "Title must be between 3 and 30 characters.",
+                message: "All fields are required",
             });
-        }
 
-        if (!salutation || salutation.trim().length < 3 || salutation.trim().length > 30) {
+        if (!req.file)
             return res.status(400).json({
                 success: false,
-                message: "Salutation must be between 3 and 30 characters.",
+                message: "Image is required",
             });
-        }
 
-        if (!req.file) {
-            return res.status(400).json({
-                success: false,
-                message: "Sponsor logo is required.",
-            });
-        }
+        const result = await cloudinary.uploader.upload(req.file.path, {
+            folder: "Sponsors",
+        });
 
-        const sponsor = await Sponser.create({
-            image: req.file.path,
-            title: title.trim(),
-            salutation: salutation.trim(),
+        fs.unlinkSync(req.file.path);
+
+        const sponsor = await Sponsor.create({
+            title,
+            salutation,
+            image: result.secure_url,
+            imagePublicId: result.public_id,
         });
 
         return res.status(201).json({
             success: true,
-            message: "Sponsor created successfully.",
             data: sponsor,
         });
 
     } catch (error) {
-        console.error(error);
+
+        console.log(error);
+
+        if (req.file && fs.existsSync(req.file.path)) {
+            fs.unlinkSync(req.file.path);
+        }
 
         return res.status(500).json({
             success: false,
-            message: "Internal Server Error",
+            message: "Server Error",
         });
     }
 };
 
-/**
- * @desc Get All Sponsors
- * @route GET /api/sponsors
- */
+/* ---------------- GET ALL ---------------- */
+
 export const getSponsors = async (req, res) => {
+
     try {
-        const sponsors = await Sponser.find().sort({ createdAt: -1 });
+
+        const sponsors = await Sponsor.find().sort({
+            createdAt: -1,
+        });
 
         return res.status(200).json({
             success: true,
@@ -66,29 +72,29 @@ export const getSponsors = async (req, res) => {
         });
 
     } catch (error) {
-        console.error(error);
 
         return res.status(500).json({
             success: false,
-            message: "Internal Server Error",
+            message: "Server Error",
         });
+
     }
+
 };
 
-/**
- * @desc Get Single Sponsor
- * @route GET /api/sponsors/:id
- */
-export const getSponsorById = async (req, res) => {
-    try {
-        const sponsor = await Sponser.findById(req.params.id);
+/* ---------------- GET ONE ---------------- */
 
-        if (!sponsor) {
+export const getSponsorById = async (req, res) => {
+
+    try {
+
+        const sponsor = await Sponsor.findById(req.params.id);
+
+        if (!sponsor)
             return res.status(404).json({
                 success: false,
-                message: "Sponsor not found.",
+                message: "Sponsor not found",
             });
-        }
 
         return res.status(200).json({
             success: true,
@@ -96,88 +102,111 @@ export const getSponsorById = async (req, res) => {
         });
 
     } catch (error) {
-        console.error(error);
 
         return res.status(500).json({
             success: false,
-            message: "Internal Server Error",
+            message: "Server Error",
         });
+
     }
+
 };
 
-/**
- * @desc Update Sponsor
- * @route PUT /api/sponsors/:id
- */
+/* ---------------- UPDATE ---------------- */
+
 export const updateSponsor = async (req, res) => {
+
     try {
 
-        const sponsor = await Sponser.findById(req.params.id);
+        const sponsor = await Sponsor.findById(req.params.id);
 
-        if (!sponsor) {
+        if (!sponsor)
             return res.status(404).json({
                 success: false,
-                message: "Sponsor not found.",
+                message: "Sponsor not found",
             });
-        }
 
-        const { title, salutation } = req.body;
+        if (req.body.title)
+            sponsor.title = req.body.title;
 
-        if (title) sponsor.title = title.trim();
-
-        if (salutation) sponsor.salutation = salutation.trim();
+        if (req.body.salutation)
+            sponsor.salutation = req.body.salutation;
 
         if (req.file) {
-            sponsor.image = req.file.path;
+
+            await cloudinary.uploader.destroy(
+                sponsor.imagePublicId
+            );
+
+            const result = await cloudinary.uploader.upload(
+                req.file.path,
+                {
+                    folder: "Sponsors",
+                }
+            );
+
+            fs.unlinkSync(req.file.path);
+
+            sponsor.image = result.secure_url;
+            sponsor.imagePublicId = result.public_id;
+
         }
 
         await sponsor.save();
 
         return res.status(200).json({
             success: true,
-            message: "Sponsor updated successfully.",
+            message: "Sponsor updated successfully",
             data: sponsor,
         });
 
     } catch (error) {
-        console.error(error);
+
+        if (req.file && fs.existsSync(req.file.path)) {
+            fs.unlinkSync(req.file.path);
+        }
 
         return res.status(500).json({
             success: false,
-            message: "Internal Server Error",
+            message: "Server Error",
         });
+
     }
+
 };
 
-/**
- * @desc Delete Sponsor
- * @route DELETE /api/sponsors/:id
- */
+/* ---------------- DELETE ---------------- */
+
 export const deleteSponsor = async (req, res) => {
+
     try {
 
-        const sponsor = await Sponser.findById(req.params.id);
+        const sponsor = await Sponsor.findById(req.params.id);
 
-        if (!sponsor) {
+        if (!sponsor)
             return res.status(404).json({
                 success: false,
-                message: "Sponsor not found.",
+                message: "Sponsor not found",
             });
-        }
+
+        await cloudinary.uploader.destroy(
+            sponsor.imagePublicId
+        );
 
         await sponsor.deleteOne();
 
         return res.status(200).json({
             success: true,
-            message: "Sponsor deleted successfully.",
+            message: "Sponsor deleted successfully",
         });
 
     } catch (error) {
-        console.error(error);
 
         return res.status(500).json({
             success: false,
-            message: "Internal Server Error",
+            message: "Server Error",
         });
+
     }
+
 };
