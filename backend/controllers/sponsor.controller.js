@@ -5,7 +5,18 @@ import { Sponsor } from "../models/sponsor.model.js";
 export const createSponsor = async (req, res, next) => {
   try {
     const { title, salutation } = req.body;
-    // validation is done in middleware
+
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: "Image is required" });
+    }
+
+    if (!process.env.CLOUD_NAME || !process.env.CLOUD_API_KEY || !process.env.CLOUD_API_SECRET) {
+      return res.status(500).json({
+        success: false,
+        message: "Cloudinary is not configured on the server",
+      });
+    }
+
     const result = await cloudinary.uploader.upload(req.file.path, {
       folder: "Sponsors",
     });
@@ -20,7 +31,6 @@ export const createSponsor = async (req, res, next) => {
 
     res.status(201).json({ success: true, data: sponsor });
   } catch (error) {
-    // clean up uploaded file if any
     if (req.file && fs.existsSync(req.file.path)) {
       fs.unlinkSync(req.file.path);
     }

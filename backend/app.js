@@ -6,6 +6,7 @@ import compression from "compression";
 import rateLimit from "express-rate-limit";
 
 import sponsorRoutes from "./routes/sponsor.routes.js";
+import authRoutes from "./routes/auth.routes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
@@ -37,6 +38,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
 // Routes
+app.use("/api/auth", authRoutes);
 app.use("/api/sponsors", sponsorRoutes);
 
 // Health check
