@@ -1,11 +1,21 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 import {
     LayoutDashboard,
     Image,
+    LogOut,
 } from "lucide-react";
 
 export default function Sidebar() {
+    const { logout } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = async () => {
+        await logout();
+        navigate("/login");
+    };
+
     return (
 
         <aside className="w-64 bg-slate-900 text-white">
@@ -52,6 +62,14 @@ export default function Sidebar() {
                     Sponsors
 
                 </NavLink>
+
+                <button
+                    onClick={handleLogout}
+                    className="flex w-full items-center gap-3 rounded-lg p-3 text-left text-slate-200 transition hover:bg-slate-700"
+                >
+                    <LogOut />
+                    Logout
+                </button>
 
             </nav>
 

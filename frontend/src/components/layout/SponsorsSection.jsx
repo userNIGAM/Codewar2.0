@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -7,35 +8,27 @@ import { Navigation, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 
-const sponsors = [
-  {
-    name: "Bridge International",
-    role: "Abroad Study Partner",
-    logo: "/sponsors/bridge.png",
-  },
-  {
-    name: "Defang.io",
-    role: "Deployment Partner",
-    logo: "/sponsors/defang.png",
-  },
-  {
-    name: "GeeksforGeeks",
-    role: "Learning Partner",
-    logo: "/sponsors/gfg.png",
-  },
-  {
-    name: "Programiz",
-    role: "Education Partner",
-    logo: "/sponsors/programiz.png",
-  },
-  {
-    name: "Canva",
-    role: "Design Partner",
-    logo: "/sponsors/canva.png",
-  },
-];
+import { getSponsors } from "../../api/api";
 
 export default function SponsorsSection() {
+  const [sponsors, setSponsors] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSponsors = async () => {
+      try {
+        const response = await getSponsors();
+        setSponsors(response.data.data || []);
+      } catch (error) {
+        console.error("Failed to load sponsors", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSponsors();
+  }, []);
+
   return (
     <section className="relative overflow-hidden py-24">
       {/* Glow */}
@@ -76,68 +69,81 @@ export default function SponsorsSection() {
         </p>
 
         <div className="relative mt-20">
-          {/* Navigation */}
-          <button className="sponsor-prev absolute left-0 top-1/2 z-10 -translate-y-1/2 rounded-full border border-cyan-500/20 bg-white/5 p-3 text-cyan-400 backdrop-blur-lg transition hover:bg-cyan-500/20">
-            <ChevronLeft />
-          </button>
+          {!loading && sponsors.length > 0 && (
+            <>
+              <button className="sponsor-prev absolute left-0 top-1/2 z-10 -translate-y-1/2 rounded-full border border-cyan-500/20 bg-white/5 p-3 text-cyan-400 backdrop-blur-lg transition hover:bg-cyan-500/20">
+                <ChevronLeft />
+              </button>
 
-          <button className="sponsor-next absolute right-0 top-1/2 z-10 -translate-y-1/2 rounded-full border border-cyan-500/20 bg-white/5 p-3 text-cyan-400 backdrop-blur-lg transition hover:bg-cyan-500/20">
-            <ChevronRight />
-          </button>
+              <button className="sponsor-next absolute right-0 top-1/2 z-10 -translate-y-1/2 rounded-full border border-cyan-500/20 bg-white/5 p-3 text-cyan-400 backdrop-blur-lg transition hover:bg-cyan-500/20">
+                <ChevronRight />
+              </button>
+            </>
+          )}
 
-          <Swiper
-            modules={[Navigation, Autoplay]}
-            navigation={{
-              nextEl: ".sponsor-next",
-              prevEl: ".sponsor-prev",
-            }}
-            autoplay={{
-              delay: 2500,
-              disableOnInteraction: false,
-            }}
-            loop
-            centeredSlides
-            spaceBetween={30}
-            breakpoints={{
-              320: {
-                slidesPerView: 1,
-              },
-              640: {
-                slidesPerView: 2,
-              },
-              1024: {
-                slidesPerView: 3,
-              },
-            }}
-          >
-            {sponsors.map((sponsor) => (
-              <SwiperSlide key={sponsor.name}>
-                <motion.div
-                  whileHover={{
-                    y: -8,
-                    scale: 1.03,
-                  }}
-                  className="group py-4"
-                >
-                  <div className="mx-auto flex h-56 w-56 items-center justify-center rounded-3xl border border-white/10 bg-slate-900/50 backdrop-blur-xl transition-all duration-500 group-hover:border-cyan-400/50">
-                    <img
-                      src={sponsor.logo}
-                      alt={sponsor.name}
-                      className="max-h-36 max-w-36 object-contain transition duration-500 group-hover:scale-110"
-                    />
-                  </div>
+          {loading ? (
+            <div className="rounded-3xl border border-white/10 bg-slate-900/50 p-10 text-center text-slate-400">
+              Loading sponsors...
+            </div>
+          ) : sponsors.length === 0 ? (
+            <div className="rounded-3xl border border-white/10 bg-slate-900/50 p-10 text-center text-slate-400">
+              No sponsors available yet.
+            </div>
+          ) : (
+            <Swiper
+              modules={[Navigation, Autoplay]}
+              navigation={{
+                nextEl: ".sponsor-next",
+                prevEl: ".sponsor-prev",
+              }}
+              autoplay={{
+                delay: 2500,
+                disableOnInteraction: false,
+              }}
+              loop
+              centeredSlides
+              spaceBetween={30}
+              breakpoints={{
+                320: {
+                  slidesPerView: 1,
+                },
+                640: {
+                  slidesPerView: 2,
+                },
+                1024: {
+                  slidesPerView: 3,
+                },
+              }}
+            >
+              {sponsors.map((sponsor) => (
+                <SwiperSlide key={sponsor._id}>
+                  <motion.div
+                    whileHover={{
+                      y: -8,
+                      scale: 1.03,
+                    }}
+                    className="group py-4"
+                  >
+                    <div className="mx-auto flex h-56 w-56 items-center justify-center rounded-3xl border border-white/10 bg-slate-900/50 backdrop-blur-xl transition-all duration-500 group-hover:border-cyan-400/50">
+                      <img
+                        src={sponsor.image}
+                        alt={sponsor.title}
+                        className="max-h-36 max-w-36 object-contain transition duration-500 group-hover:scale-110"
+                      />
+                    </div>
 
-                  <h3 className="mt-6 text-center text-2xl font-bold text-cyan-300">
-                    {sponsor.name}
-                  </h3>
+                    <h3 className="mt-6 text-center text-2xl font-bold text-cyan-300">
+                      {sponsor.title}
+                    </h3>
 
-                  <p className="mt-2 text-center text-slate-400">
-                    {sponsor.role}
-                  </p>
-                </motion.div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
+                    <p className="mt-2 text-center text-slate-400">
+                      {sponsor.salutation}
+                    </p>
+                  </motion.div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          )}
         </div>
       </div>
     </section>

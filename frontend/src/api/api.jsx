@@ -18,3 +18,7 @@ export const updateSponsor = (id, formData) =>
   api.put(`/sponsors/${id}`, formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
+
+export const loginAdmin = (payload) => api.post("/auth/login", payload);
+export const getAdminMe = () => api.get("/auth/me");
+export const logoutAdmin = () => api.post("/auth/logout");
