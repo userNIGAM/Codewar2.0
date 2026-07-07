@@ -19,6 +19,19 @@ export const updateSponsor = (id, formData) =>
     headers: { "Content-Type": "multipart/form-data" },
   });
 
+export const createSupportedBy = (formData) =>
+  api.post("/supported-by", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+
+export const getSupportedBy = () => api.get("/supported-by");
+export const getSupportedByItem = (id) => api.get(`/supported-by/${id}`);
+export const deleteSupportedBy = (id) => api.delete(`/supported-by/${id}`);
+export const updateSupportedBy = (id, formData) =>
+  api.put(`/supported-by/${id}`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+
 export const loginAdmin = (payload) => api.post("/auth/login", payload);
 export const getAdminMe = () => api.get("/auth/me");
 export const logoutAdmin = () => api.post("/auth/logout");

@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -6,30 +7,23 @@ import { Navigation, Autoplay } from "swiper/modules";
 
 import "swiper/css";
 import "swiper/css/navigation";
+import { getSupportedBy } from "../../api/api";
 
-const supporters = [
-  {
-    name: "BIM - Mechi Multiple Campus",
-    role: "Community Partner",
-    logo: "/supporters/bim.png",
-  },
-  {
-    name: "FSU - Mechi Multiple Campus",
-    role: "Key Supporter",
-    logo: "/supporters/fsu.png",
-  },
-  {
-    name: "Unity Samaj",
-    role: "Community Partner",
-    logo: "/supporters/unity.png",
-  },
-  {
-    name: "Tech Club",
-    role: "Technical Partner",
-    logo: "/supporters/techclub.png",
-  },
-];
 export default function SupportedBySection() {
+  const [supporters, setSupporters] = useState([]);
+
+  useEffect(() => {
+    const fetchSupporters = async () => {
+      try {
+        const res = await getSupportedBy();
+        setSupporters(res.data.data || []);
+      } catch (error) {
+        console.error("Failed to load supported by items", error);
+      }
+    };
+
+    fetchSupporters();
+  }, []);
   return (
     <section className="relative overflow-hidden py-24">
       {/* Background Glow */}
@@ -91,59 +85,63 @@ export default function SupportedBySection() {
             <ChevronRight />
           </button>
 
-          <Swiper
-            modules={[Navigation, Autoplay]}
-            navigation={{
-              prevEl: ".support-prev",
-              nextEl: ".support-next",
-            }}
-            autoplay={{
-              delay: 2500,
-              disableOnInteraction: false,
-            }}
-            loop
-            centeredSlides
-            spaceBetween={30}
-            breakpoints={{
-              320: {
-                slidesPerView: 1,
-              },
-              768: {
-                slidesPerView: 2,
-              },
-              1024: {
-                slidesPerView: 3,
-              },
-            }}
-          >
-            {supporters.map((supporter) => (
-              <SwiperSlide key={supporter.name}>
-                <motion.div
-                  whileHover={{
-                    y: -8,
-                    scale: 1.03,
-                  }}
-                  className="group py-4"
-                >
-                  <div className="mx-auto flex h-56 w-56 items-center justify-center rounded-3xl border border-white/10 bg-slate-900/50 backdrop-blur-xl transition-all duration-500 group-hover:border-cyan-400/50">
-                    <img
-                      src={supporter.logo}
-                      alt={supporter.name}
-                      className="max-h-36 max-w-36 object-contain transition duration-500 group-hover:scale-110"
-                    />
-                  </div>
+          {supporters.length > 0 ? (
+            <Swiper
+              modules={[Navigation, Autoplay]}
+              navigation={{
+                prevEl: ".support-prev",
+                nextEl: ".support-next",
+              }}
+              autoplay={{
+                delay: 2500,
+                disableOnInteraction: false,
+              }}
+              loop
+              centeredSlides
+              spaceBetween={30}
+              breakpoints={{
+                320: {
+                  slidesPerView: 1,
+                },
+                768: {
+                  slidesPerView: 2,
+                },
+                1024: {
+                  slidesPerView: 3,
+                },
+              }}
+            >
+              {supporters.map((supporter) => (
+                <SwiperSlide key={supporter._id || supporter.name}>
+                  <motion.div
+                    whileHover={{
+                      y: -8,
+                      scale: 1.03,
+                    }}
+                    className="group py-4"
+                  >
+                    <div className="mx-auto flex h-56 w-56 items-center justify-center rounded-3xl border border-white/10 bg-slate-900/50 backdrop-blur-xl transition-all duration-500 group-hover:border-cyan-400/50">
+                      <img
+                        src={supporter.image}
+                        alt={supporter.name}
+                        className="max-h-36 max-w-36 object-contain transition duration-500 group-hover:scale-110"
+                      />
+                    </div>
 
-                  <h3 className="mt-6 text-center text-2xl font-bold text-cyan-300">
-                    {supporter.name}
-                  </h3>
+                    <h3 className="mt-6 text-center text-2xl font-bold text-cyan-300">
+                      {supporter.name}
+                    </h3>
 
-                  <p className="mt-2 text-center text-slate-400">
-                    {supporter.role}
-                  </p>
-                </motion.div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
+                    <p className="mt-2 text-center text-slate-400">
+                      {supporter.role}
+                    </p>
+                  </motion.div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          ) : (
+            <div className="mt-10 text-center text-slate-400">No supported by items available yet.</div>
+          )}
         </div>
       </div>
     </section>

@@ -4,6 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import {
     LayoutDashboard,
     Image,
+    BadgeCheck,
     LogOut,
 } from "lucide-react";
 
@@ -60,6 +61,23 @@ export default function Sidebar() {
                     <Image />
 
                     Sponsors
+
+                </NavLink>
+
+                <NavLink
+                    to="/admin/supported-by"
+                    className={({ isActive }) =>
+                        `flex items-center gap-3 p-3 rounded-lg ${
+                            isActive
+                                ? "bg-cyan-500"
+                                : "hover:bg-slate-700"
+                        }`
+                    }
+                >
+
+                    <BadgeCheck />
+
+                    Supported By
 
                 </NavLink>
 

@@ -12,3 +12,16 @@ export const validateSponsor = (req, res, next) => {
   }
   next();
 };
+
+export const validateSupportedBy = (req, res, next) => {
+  const schema = Joi.object({
+    name: Joi.string().min(3).max(60).required(),
+    role: Joi.string().min(3).max(40).required(),
+  });
+
+  const { error } = schema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ success: false, message: error.details[0].message });
+  }
+  next();
+};
