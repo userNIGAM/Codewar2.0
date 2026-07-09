@@ -6,7 +6,7 @@ const timelineData = [
     title: "Registration",
     date: "23 April 2025 - 27 May 2025",
     description:
-      "Registration for CodeWar 1.0 opens from April, 2025, until May 27, 2025. This timeframe provides aspiring participants with the opportunity to register for the upcoming event.",
+      "Registration for CodeWar 2.0 opens from April, 2025, until May 27, 2025. This timeframe provides aspiring participants with the opportunity to register for the upcoming event.",
   },
   {
     title: "Formation of Teams",

@@ -5,6 +5,7 @@ import {
     LayoutDashboard,
     Image,
     BadgeCheck,
+    Clock,
     LogOut,
 } from "lucide-react";
 
@@ -78,6 +79,23 @@ export default function Sidebar() {
                     <BadgeCheck />
 
                     Supported By
+
+                </NavLink>
+
+                <NavLink
+                    to="/admin/countdown"
+                    className={({ isActive }) =>
+                        `flex items-center gap-3 p-3 rounded-lg ${
+                            isActive
+                                ? "bg-cyan-500"
+                                : "hover:bg-slate-700"
+                        }`
+                    }
+                >
+
+                    <Clock />
+
+                    Countdown
 
                 </NavLink>
 

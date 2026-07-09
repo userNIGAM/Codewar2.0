@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
 import "./index.css";
 
@@ -22,21 +22,38 @@ import PoweredBySection from "./components/layout/PoweredBySection";
 import SupportedBySection from "./components/layout/SupportedBySection";
 import Advisors from "./components/layout/Advisors";
 import AboutSection from "./components/layout/AboutSection";
+import SampleQuestions from "./components/layout/SampleQuestions";
+import Winners from "./components/layout/Winners";
+import FAQSection from "./components/layout/FAQSection";
+import { getCountdown } from "./api/api";
 
 function App() {
   const logs = useTerminalLogs();
 
   const [isRegModalOpen, setIsRegModalOpen] = useState(false);
+  const [targetDate, setTargetDate] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const targetDate = useMemo(() => {
-    const target = new Date();
+  useEffect(() => {
+    const fetchCountdown = async () => {
+      try {
+        const response = await getCountdown();
+        if (response.data.success && response.data.data.targetDate) {
+          setTargetDate(new Date(response.data.data.targetDate));
+        }
+      } catch (error) {
+        console.error("Error fetching countdown:", error);
+        // Fallback to default countdown if API fails
+        const defaultDate = new Date();
+        defaultDate.setDate(defaultDate.getDate() + 14);
+        defaultDate.setHours(defaultDate.getHours() + 6);
+        setTargetDate(defaultDate);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    target.setDate(target.getDate() + 14);
-    target.setHours(target.getHours() + 6);
-    target.setMinutes(target.getMinutes() + 24);
-    target.setSeconds(target.getSeconds() + 30);
-
-    return target;
+    fetchCountdown();
   }, []);
 
   return (
@@ -58,7 +75,7 @@ function App() {
 
         {/* Remaining Content */}
         <section className="max-w-7xl mx-auto px-6 py-16">
-          <CountdownTimer targetDate={targetDate} />
+          {!loading && targetDate && <CountdownTimer targetDate={targetDate} />}
 
           <div className="mt-24">
             <EventTimeline />
@@ -75,6 +92,9 @@ function App() {
           <SupportedBySection />
           <Advisors />
           <AboutSection />
+          <SampleQuestions />
+          <Winners />
+          <FAQSection />
         </section>
       </main>
 

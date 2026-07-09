@@ -4,6 +4,18 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
 });
 
+// Add token to every request
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("admin_token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
 export default api;
 
 export const createSponsor = (formData) =>
@@ -35,3 +47,8 @@ export const updateSupportedBy = (id, formData) =>
 export const loginAdmin = (payload) => api.post("/auth/login", payload);
 export const getAdminMe = () => api.get("/auth/me");
 export const logoutAdmin = () => api.post("/auth/logout");
+
+// Countdown APIs
+export const getCountdown = () => api.get("/countdown");
+export const setCountdown = (payload) => api.post("/countdown/set", payload);
+export const toggleCountdown = () => api.put("/countdown/toggle");

@@ -108,6 +108,7 @@ export default function OrganizerSection() {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => window.open("https://discord.gg/mechimavericks", "_blank", "noopener,noreferrer")}
                 className="flex items-center gap-2 rounded-xl border border-cyan-500/40 bg-white/5 px-8 py-4 font-semibold text-white backdrop-blur-md"
               >
                 <Users size={18} />

@@ -5,6 +5,7 @@ import AdminLayout from "./layouts/AdminLayout";
 import Dashboard from "./pages/Dashboard";
 import Sponsors from "./pages/Sponsors";
 import SupportedBy from "./pages/SupportedBy";
+import Countdown from "./pages/Countdown";
 
 export default function AdminRoutes() {
     return (
@@ -25,6 +26,11 @@ export default function AdminRoutes() {
                 <Route
                     path="supported-by"
                     element={<SupportedBy />}
+                />
+
+                <Route
+                    path="countdown"
+                    element={<Countdown />}
                 />
 
             </Route>

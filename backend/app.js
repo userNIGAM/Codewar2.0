@@ -8,6 +8,7 @@ import rateLimit from "express-rate-limit";
 import sponsorRoutes from "./routes/sponsor.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import supportedByRoutes from "./routes/supportedBy.routes.js";
+import countdownRoutes from "./routes/countdown.routes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
@@ -42,6 +43,7 @@ app.use(morgan("dev"));
 app.use("/api/auth", authRoutes);
 app.use("/api/sponsors", sponsorRoutes);
 app.use("/api/supported-by", supportedByRoutes);
+app.use("/api/countdown", countdownRoutes);
 
 // Health check
 app.get("/health", (req, res) => res.send("OK"));
