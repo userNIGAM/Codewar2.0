@@ -20,6 +20,8 @@ import TeamSection from "./components/layout/TeamSection";
 import SponsorsSection from "./components/layout/SponsorsSection";
 import PoweredBySection from "./components/layout/PoweredBySection";
 import SupportedBySection from "./components/layout/SupportedBySection";
+import Advisors from "./components/layout/Advisors";
+import AboutSection from "./components/layout/AboutSection";
 
 function App() {
   const logs = useTerminalLogs();
@@ -71,6 +73,8 @@ function App() {
           <SponsorsSection />
           <PoweredBySection />
           <SupportedBySection />
+          <Advisors />
+          <AboutSection />
         </section>
       </main>
 
