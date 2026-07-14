@@ -10,7 +10,7 @@ function BackgroundElements() {
   return (
     <>
       {/* Matrix Grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#080e1b_1px,transparent_1px),linear-gradient(to_bottom,#080e1b_1px,transparent_1px)] bg-size-[4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,black_70%,transparent_100%)] opacity-80 animate-grid-drift" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#080e1b_1px,transparent_1px),linear-gradient(to_bottom,#080e1b_1px,transparent_1px)] bg-size-[4rem_4rem] mask-[radial-gradient(ellipse_60%_50%_at_50%_50%,black_70%,transparent_100%)] opacity-80 animate-grid-drift" />
 
       {/* Background Glow */}
       <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-cyan-900/10 blur-[80px]" />
