@@ -1,71 +1,72 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import {
-  ShieldCheck,
-  BadgeCheck,
-  Trophy,
-  Award,
-} from "lucide-react";
+import { ShieldCheck, BadgeCheck, Trophy } from "lucide-react";
+import { FaMedal, FaCrown } from "react-icons/fa";
 
-import {
-  FaMedal,
-  FaCrown,
-} from "react-icons/fa";
+import { getAwards } from "../../api/api";
 
-const awards = [
-  {
-    title: "Winner",
-    icon: <FaCrown />,
-    gradient:
-      "from-yellow-300 via-yellow-400 to-amber-500",
-    glow: "shadow-yellow-500/30",
-    items: [
-      "Fellowship Program from Kharaayo Inc.",
-      "Exciting Swags & Gifts for Winner",
-      "Defang Pro for 1 Year",
-      "Stickers for participants",
-      "Certificate for all the Participants",
-    ],
-  },
-  {
-    title: "First Runner Up",
-    icon: <Trophy size={18} />,
-    gradient:
-      "from-cyan-300 via-sky-400 to-cyan-500",
-    glow: "shadow-cyan-500/30",
-    items: [
-      "Programiz Pro for 1 Year",
-      "Canva Pro for 1 Year",
-      "Stickers for participants",
-      "Certificate for all the Participants",
-      "Special Recognition",
-    ],
-  },
-  {
-    title: "Second Runner Up",
-    icon: <FaMedal />,
-    gradient:
-      "from-orange-400 via-orange-500 to-amber-600",
-    glow: "shadow-orange-500/30",
-    items: [
-      "Canva Pro for 1 Year",
-      "Stickers for participants",
-      "Certificate for all the Participants",
-      "Recognition",
-      "Participation Gifts",
-    ],
-  },
-];
+const iconMap = {
+  crown: <FaCrown size={34} />,
+  trophy: <Trophy size={34} />,
+  medal: <FaMedal size={34} />,
+  badge: <BadgeCheck size={34} />,
+};
 
 export default function AwardsSection() {
+  const [awardData, setAwardData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    const loadAwards = async () => {
+      try {
+        const res = await getAwards();
+
+        // If your backend returns { success, data }
+        // change this to:
+        // setAwardData(res.data.data);
+
+        setAwardData(res.data);
+      } catch (err) {
+        console.error("Failed to fetch awards:", err);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadAwards();
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="py-24 flex justify-center">
+        <div className="h-12 w-12 rounded-full border-4 border-cyan-500 border-t-transparent animate-spin" />
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="py-24 text-center">
+        <p className="text-red-400">Failed to load awards.</p>
+      </section>
+    );
+  }
+
+  if (!awardData?.isPublished) {
+    return null;
+  }
+
   return (
     <section className="relative overflow-hidden py-24">
-      {/* Transparent Background */}
+      {/* Background Glow */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute left-1/2 top-20 h-96 w-96 -translate-x-1/2 rounded-full bg-cyan-500/10 blur-[140px]" />
       </div>
 
       <div className="mx-auto max-w-7xl px-6">
-        {/* Top Badge */}
+        {/* Badge */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -97,6 +98,7 @@ export default function AwardsSection() {
           className="mx-auto mt-5 h-1 rounded-full bg-linear-to-r from-cyan-400 to-teal-400"
         />
 
+        {/* Note */}
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -104,15 +106,14 @@ export default function AwardsSection() {
           transition={{ delay: 0.2 }}
           className="mx-auto mt-8 max-w-2xl text-center text-gray-300"
         >
-          Please note that the prizes and awards are subject to
-          change as per the event requirements.
+          {awardData?.note}
         </motion.p>
 
-        {/* Cards */}
+        {/* Award Cards */}
         <div className="mt-16 grid gap-8 lg:grid-cols-3">
-          {awards.map((award, index) => (
+          {awardData?.awards?.map((award, index) => (
             <motion.div
-              key={award.title}
+              key={award.position}
               initial={{ opacity: 0, y: 60 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -124,9 +125,9 @@ export default function AwardsSection() {
                 y: -8,
                 scale: 1.02,
               }}
-              className={`group relative rounded-3xl border border-cyan-400/10 bg-slate-900/50 p-8 backdrop-blur-xl transition-all duration-300 ${award.glow} shadow-2xl`}
+              className={`group relative rounded-3xl border border-cyan-400/10 bg-slate-900/50 p-8 backdrop-blur-xl shadow-2xl transition-all duration-300 ${award.glow}`}
             >
-              {/* Glow */}
+              {/* Hover Glow */}
               <div
                 className={`absolute inset-0 rounded-3xl bg-linear-to-b ${award.gradient} opacity-0 blur-3xl transition duration-500 group-hover:opacity-10`}
               />
@@ -134,34 +135,32 @@ export default function AwardsSection() {
               {/* Label */}
               <div className="flex justify-center">
                 <div
-                  className={`bg-linear-to-r ${award.gradient} rounded-full px-8 py-3 font-semibold text-slate-900 shadow-lg`}
+                  className={`rounded-full bg-linear-to-r ${award.gradient} px-8 py-3 font-semibold text-slate-900 shadow-lg`}
                 >
                   {award.title}
                 </div>
               </div>
 
-              {/* Center Icon */}
+              {/* Icon */}
               <div className="mt-8 flex justify-center">
                 <motion.div
                   whileHover={{ rotate: 360 }}
                   transition={{ duration: 0.8 }}
                   className="flex h-20 w-20 items-center justify-center rounded-full border border-cyan-400/20 bg-cyan-500/10 text-cyan-300"
                 >
-                  <BadgeCheck size={34} />
+                  {iconMap[award.icon] ?? <BadgeCheck size={34} />}
                 </motion.div>
               </div>
 
-              {/* List */}
+              {/* Prize List */}
               <ul className="mt-10 space-y-5">
-                {award.items.map((item) => (
-                  <li
-                    key={item}
-                    className="flex items-start gap-3 text-gray-200"
-                  >
+                {award.items?.map((item, i) => (
+                  <li key={i} className="flex items-start gap-3 text-gray-200">
                     <ShieldCheck
                       size={18}
                       className="mt-1 shrink-0 text-cyan-400"
                     />
+
                     <span>{item}</span>
                   </li>
                 ))}
@@ -171,8 +170,7 @@ export default function AwardsSection() {
               <div
                 className={`absolute inset-0 rounded-3xl bg-linear-to-r ${award.gradient} opacity-0 transition-opacity duration-500 group-hover:opacity-20`}
                 style={{
-                  mask:
-                    "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                  mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
                   WebkitMask:
                     "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
                   WebkitMaskComposite: "xor",

@@ -13,7 +13,7 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 export default api;
@@ -52,3 +52,7 @@ export const logoutAdmin = () => api.post("/auth/logout");
 export const getCountdown = () => api.get("/countdown");
 export const setCountdown = (payload) => api.post("/countdown/set", payload);
 export const toggleCountdown = () => api.put("/countdown/toggle");
+
+// Award APIs
+export const getAwards = () => api.get("/awards");
+export const updateAwards = (payload) => api.put("/awards", payload);
