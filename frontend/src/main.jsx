@@ -5,11 +5,14 @@ import { Toaster } from "react-hot-toast";
 
 import App from "./App";
 import "./index.css";
+import { EventProvider } from "./context/EventContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
-      <App />
+       <EventProvider>
+    <App />
+  </EventProvider>
       <Toaster position="top-right" />
     </BrowserRouter>
   </React.StrictMode>

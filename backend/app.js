@@ -11,6 +11,7 @@ import supportedByRoutes from "./routes/supportedBy.routes.js";
 import countdownRoutes from "./routes/countdown.routes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import awardRoutes from "./routes/award.routes.js";
+import eventRoutes from "./routes/event.routes.js"
 
 const app = express();
 
@@ -46,6 +47,7 @@ app.use("/api/sponsors", sponsorRoutes);
 app.use("/api/supported-by", supportedByRoutes);
 app.use("/api/countdown", countdownRoutes);
 app.use("/api/awards", awardRoutes);
+app.use("/api/events", eventRoutes);
 // Health check
 app.get("/health", (req, res) => res.send("OK"));
 

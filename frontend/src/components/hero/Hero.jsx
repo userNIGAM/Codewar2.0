@@ -1,8 +1,12 @@
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, ChevronRight, MapPin, Calendar } from "lucide-react";
+import { useEvent } from "../../context/EventContext"
 
 function Hero({ onRegisterClick }) {
+const { event, loading } = useEvent();
+
+  if (loading) return <p>Loading...</p>;
   return (
     <div className="relative flex flex-col items-center justify-center text-center w-full min-h-screen px-4 overflow-hidden">
       {/* Glow Effects */}
@@ -92,7 +96,7 @@ function Hero({ onRegisterClick }) {
         className="flex items-center gap-2 mt-3 text-cyan-400 font-mono text-sm md:text-base tracking-[0.25em] uppercase"
       >
         <Calendar className="w-4 h-4" />
-        <span>15 August 2026</span>
+        <span>{event?.day ?? ""}{event?.month ?? ""}{event?.year ?? ""}</span>
       </motion.div>
 
       {/* Tagline */}

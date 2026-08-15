@@ -56,3 +56,11 @@ export const toggleCountdown = () => api.put("/countdown/toggle");
 // Award APIs
 export const getAwards = () => api.get("/awards");
 export const updateAwards = (payload) => api.put("/awards", payload);
+
+// Event APIs
+// Event APIs
+
+export const getCurrentEvent = () => api.get("/events/current");
+export const getEvents = () => api.get("/events");
+export const saveEvent = (payload) => api.post("/events", payload);
+export const deleteEvent = (id) => api.delete(`/events/${id}`);

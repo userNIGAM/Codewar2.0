@@ -1,5 +1,7 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { CalendarDays } from "lucide-react";
+import { useEvent } from "../../context/EventContext";
 
 const timelineData = [
   {
@@ -16,16 +18,18 @@ const timelineData = [
   },
   {
     title: "Main Event",
-    date: "05th - 06th June 2025",
+    // date: "05th - 06th June 2025",
     description:
       "The main event will take place on June 05 and 06, 2025. Registered participants and their teams will compete in the final round.",
   },
 ];
 
 export default function EventTimeline() {
+  const {event, loading} = useEvent();
+
+  if (loading) return <p>Loading...</p>;
   return (
     <section className="relative w-full text-white">
-
       <div className="container mx-auto px-6 py-24">
         {/* Header */}
         <motion.div
@@ -60,7 +64,7 @@ export default function EventTimeline() {
             <h3 className="mb-2 text-5xl font-bold">Our Journey</h3>
 
             <p className="mb-8 text-3xl font-semibold text-cyan-400">
-              CodeWar 2025
+              CodeWar {event?.year ?? ""}
             </p>
 
             <p className="mb-10 leading-8 text-slate-300">

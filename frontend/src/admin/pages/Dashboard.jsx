@@ -1,3 +1,5 @@
+import EventDate from "../data/EventDate";
+
 export default function Dashboard() {
     return (
 
@@ -12,7 +14,7 @@ export default function Dashboard() {
             <p className="text-slate-500 mt-2">
 
                 Welcome Admin
-
+                <EventDate />
             </p>
 
         </div>
