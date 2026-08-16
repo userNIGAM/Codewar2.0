@@ -44,7 +44,7 @@ export default function Winners() {
 
           <h2 className="mt-5 text-5xl font-black md:text-6xl">
             <span className="bg-linear-to-r from-cyan-300 via-cyan-200 to-blue-300 bg-clip-text text-transparent">
-              CodeWar 1.0 Winners
+              CodeWar 2.0 Winners
             </span>
           </h2>
 
@@ -52,7 +52,7 @@ export default function Winners() {
 
           <p className="mx-auto mt-8 max-w-3xl text-slate-300">
             Honoring the exceptional teams who pushed the boundaries of
-            technology and innovation in our CodeWar1.0.
+            technology and innovation in our CodeWar2.0.
           </p>
         </motion.div>
 

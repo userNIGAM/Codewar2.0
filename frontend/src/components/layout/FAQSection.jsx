@@ -4,12 +4,12 @@ import { ChevronDown, ArrowRight } from "lucide-react";
 
 const faqs = [
   {
-    question: "What is CodeWar 1.0?",
+    question: "What is CodeWar 2.0?",
     answer:
-      "CodeWar 1.0 is a competitive programming event organized by Mechi Mavericks in collaboration with the BCA Association of Mechi Multiple Campus. Participants solve coding challenges individually and in teams.",
+      "CodeWar 2.0 is a competitive programming event organized by Mechi Mavericks in collaboration with the BCA Association of Mechi Multiple Campus. Participants solve coding challenges individually and in teams.",
   },
   {
-    question: "How can I register for CodeWar 1.0?",
+    question: "How can I register for CodeWar 2.0?",
     answer:
       "Registration can be completed through the official registration form available on the event website during the registration period.",
   },
@@ -39,7 +39,7 @@ const faqs = [
       "Yes. Winners and runner-ups will receive certificates, prizes, and recognition during the closing ceremony.",
   },
   {
-    question: "When and where is CodeWar 1.0 happening?",
+    question: "When and where is CodeWar 2.0 happening?",
     answer:
       "The final event will be held at Mechi Multiple Campus, Bhadrapur, Jhapa on June 5–6, 2025.",
   },
@@ -50,7 +50,7 @@ const faqs = [
       "Please refer to the official eligibility criteria. If the event is open to other institutions, it will be mentioned in the registration details.",
   },
   {
-    question: "How can I prepare for CodeWar 1.0?",
+    question: "How can I prepare for CodeWar 2.0?",
     answer:
       "Practice data structures, algorithms, problem solving, and previous competitive programming problems on platforms like Codeforces, LeetCode, or HackerRank.",
   },
@@ -83,7 +83,7 @@ export default function FAQSection() {
           <div className="mx-auto mt-5 h-1 w-20 rounded-full bg-cyan-400" />
 
           <p className="mx-auto mt-8 max-w-2xl text-slate-300">
-            Here are some common questions about CodeWar 1.0 and its details.
+            Here are some common questions about CodeWar 2.0 and its details.
           </p>
         </motion.div>
 
