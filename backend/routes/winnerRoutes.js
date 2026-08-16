@@ -12,19 +12,16 @@ import upload from "../middleware/multer.js";
 
 const router = express.Router();
 
-// GET all winners
+// Public
 router.get("/", getWinners);
 
-// GET single winner
 router.get("/:id", getWinner);
 
-// CREATE winner
+// Admin CRUD
 router.post("/", upload.single("image"), createWinner);
 
-// UPDATE winner
 router.put("/:id", upload.single("image"), updateWinner);
 
-// DELETE winner
 router.delete("/:id", deleteWinner);
 
 export default router;

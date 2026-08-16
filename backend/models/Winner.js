@@ -8,15 +8,12 @@ const winnerSchema = new mongoose.Schema(
       trim: true,
     },
 
-    badge: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-
     position: {
       type: Number,
       required: true,
+      unique: true,
+      min: 1,
+      max: 3,
     },
 
     image: {
@@ -36,4 +33,6 @@ const winnerSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model("Winner", winnerSchema);
+const Winner = mongoose.model("Winner", winnerSchema);
+
+export default Winner;

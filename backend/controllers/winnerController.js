@@ -1,36 +1,47 @@
 import Winner from "../models/Winner.js";
 import cloudinary from "../config/cloudinary.js";
-import streamifier from "streamifier";
+import fs from "fs/promises";
 
-// Upload buffer to Cloudinary
-const uploadToCloudinary = (fileBuffer) => {
-  return new Promise((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream(
-      {
-        folder: "codewar/winners",
-        resource_type: "image",
-      },
-      (error, result) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(result);
-        }
-      },
-    );
-
-    streamifier.createReadStream(fileBuffer).pipe(stream);
+// ------------------------------------
+// Helper: Upload image to Cloudinary
+// ------------------------------------
+const uploadToCloudinary = async (filePath) => {
+  return await cloudinary.uploader.upload(filePath, {
+    folder: "codewar/winners",
+    resource_type: "image",
   });
 };
 
-// DELETE image from Cloudinary
+// ------------------------------------
+// Helper: Delete local file
+// ------------------------------------
+const deleteLocalFile = async (filePath) => {
+  if (!filePath) return;
+
+  try {
+    await fs.unlink(filePath);
+  } catch (error) {
+    console.log("Local file already removed:", error.message);
+  }
+};
+
+// ------------------------------------
+// Helper: Delete Cloudinary image
+// ------------------------------------
 const deleteFromCloudinary = async (publicId) => {
   if (!publicId) return;
 
-  await cloudinary.uploader.destroy(publicId);
+  try {
+    await cloudinary.uploader.destroy(publicId);
+  } catch (error) {
+    console.error("Cloudinary delete error:", error.message);
+  }
 };
 
-// GET all winners
+// ====================================
+// GET ALL WINNERS
+// GET /api/winners
+// ====================================
 export const getWinners = async (req, res) => {
   try {
     const winners = await Winner.find().sort({ position: 1 });
@@ -49,7 +60,10 @@ export const getWinners = async (req, res) => {
   }
 };
 
-// GET single winner
+// ====================================
+// GET SINGLE WINNER
+// GET /api/winners/:id
+// ====================================
 export const getWinner = async (req, res) => {
   try {
     const winner = await Winner.findById(req.params.id);
@@ -75,15 +89,21 @@ export const getWinner = async (req, res) => {
   }
 };
 
-// CREATE winner
+// ====================================
+// CREATE WINNER
+// POST /api/winners
+// ====================================
 export const createWinner = async (req, res) => {
-  try {
-    const { title, badge, position } = req.body;
+  let localFile = null;
+  let cloudinaryImage = null;
 
-    if (!title || !badge || !position) {
+  try {
+    const { title, position } = req.body;
+
+    if (!title || !position) {
       return res.status(400).json({
         success: false,
-        message: "Title, badge and position are required",
+        message: "Title and position are required",
       });
     }
 
@@ -94,20 +114,47 @@ export const createWinner = async (req, res) => {
       });
     }
 
-    // Upload image
-    const uploadedImage = await uploadToCloudinary(req.file.buffer);
+    const positionNumber = Number(position);
 
-    // Save winner
+    if (![1, 2, 3].includes(positionNumber)) {
+      return res.status(400).json({
+        success: false,
+        message: "Position must be 1, 2 or 3",
+      });
+    }
+
+    // Check if position already exists
+    const existingWinner = await Winner.findOne({
+      position: positionNumber,
+    });
+
+    if (existingWinner) {
+      return res.status(409).json({
+        success: false,
+        message: "A winner already exists for this position",
+      });
+    }
+
+    // Local file created by Multer
+    localFile = req.file.path;
+
+    // Upload to Cloudinary
+    cloudinaryImage = await uploadToCloudinary(localFile);
+
+    // Save to MongoDB
     const winner = await Winner.create({
-      title,
-      badge,
-      position,
+      title: title.trim(),
+
+      position: positionNumber,
 
       image: {
-        url: uploadedImage.secure_url,
-        public_id: uploadedImage.public_id,
+        url: cloudinaryImage.secure_url,
+        public_id: cloudinaryImage.public_id,
       },
     });
+
+    // Remove temporary local image
+    await deleteLocalFile(localFile);
 
     res.status(201).json({
       success: true,
@@ -117,17 +164,42 @@ export const createWinner = async (req, res) => {
   } catch (error) {
     console.error("Create winner error:", error);
 
+    // Delete local file if something failed
+    if (localFile) {
+      await deleteLocalFile(localFile);
+    }
+
+    // Delete Cloudinary image if MongoDB save failed
+    if (cloudinaryImage?.public_id) {
+      await deleteFromCloudinary(cloudinaryImage.public_id);
+    }
+
+    // Duplicate position
+    if (error.code === 11000) {
+      return res.status(409).json({
+        success: false,
+        message: "This winner position already exists",
+      });
+    }
+
     res.status(500).json({
       success: false,
       message: "Failed to create winner",
+      error: error.message,
     });
   }
 };
 
-// UPDATE winner
+// ====================================
+// UPDATE WINNER
+// PUT /api/winners/:id
+// ====================================
 export const updateWinner = async (req, res) => {
+  let localFile = null;
+  let newCloudinaryImage = null;
+
   try {
-    const { title, badge, position } = req.body;
+    const { title, position } = req.body;
 
     const winner = await Winner.findById(req.params.id);
 
@@ -138,28 +210,67 @@ export const updateWinner = async (req, res) => {
       });
     }
 
-    // Update text fields
-    if (title) winner.title = title;
-    if (badge) winner.badge = badge;
-    if (position) winner.position = position;
+    if (position) {
+      const positionNumber = Number(position);
 
-    // If a new image was uploaded
-    if (req.file) {
-      // Delete old Cloudinary image
-      if (winner.image?.public_id) {
-        await deleteFromCloudinary(winner.image.public_id);
+      if (![1, 2, 3].includes(positionNumber)) {
+        return res.status(400).json({
+          success: false,
+          message: "Position must be 1, 2 or 3",
+        });
       }
 
-      // Upload new image
-      const uploadedImage = await uploadToCloudinary(req.file.buffer);
+      // Make sure another winner isn't using it
+      const existingWinner = await Winner.findOne({
+        position: positionNumber,
+        _id: { $ne: winner._id },
+      });
 
-      winner.image = {
-        url: uploadedImage.secure_url,
-        public_id: uploadedImage.public_id,
-      };
+      if (existingWinner) {
+        return res.status(409).json({
+          success: false,
+          message: "Another winner already uses this position",
+        });
+      }
+
+      winner.position = positionNumber;
     }
 
-    await winner.save();
+    if (title) {
+      winner.title = title.trim();
+    }
+
+    // -----------------------------
+    // Replace image if provided
+    // -----------------------------
+    if (req.file) {
+      localFile = req.file.path;
+
+      // Upload NEW image first
+      newCloudinaryImage = await uploadToCloudinary(localFile);
+
+      const oldPublicId = winner.image?.public_id;
+
+      // Replace MongoDB image
+      winner.image = {
+        url: newCloudinaryImage.secure_url,
+        public_id: newCloudinaryImage.public_id,
+      };
+
+      await winner.save();
+
+      // Now delete OLD Cloudinary image
+      if (oldPublicId) {
+        await deleteFromCloudinary(oldPublicId);
+      }
+    } else {
+      await winner.save();
+    }
+
+    // Delete temporary file
+    if (localFile) {
+      await deleteLocalFile(localFile);
+    }
 
     res.status(200).json({
       success: true,
@@ -169,14 +280,27 @@ export const updateWinner = async (req, res) => {
   } catch (error) {
     console.error("Update winner error:", error);
 
+    if (localFile) {
+      await deleteLocalFile(localFile);
+    }
+
+    // If new Cloudinary upload happened but update failed
+    if (newCloudinaryImage?.public_id) {
+      await deleteFromCloudinary(newCloudinaryImage.public_id);
+    }
+
     res.status(500).json({
       success: false,
       message: "Failed to update winner",
+      error: error.message,
     });
   }
 };
 
-// DELETE winner
+// ====================================
+// DELETE WINNER
+// DELETE /api/winners/:id
+// ====================================
 export const deleteWinner = async (req, res) => {
   try {
     const winner = await Winner.findById(req.params.id);
@@ -188,7 +312,7 @@ export const deleteWinner = async (req, res) => {
       });
     }
 
-    // Delete image from Cloudinary
+    // Delete Cloudinary image
     if (winner.image?.public_id) {
       await deleteFromCloudinary(winner.image.public_id);
     }
@@ -206,6 +330,7 @@ export const deleteWinner = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to delete winner",
+      error: error.message,
     });
   }
 };
