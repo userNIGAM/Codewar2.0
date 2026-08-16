@@ -334,7 +334,7 @@ export default function WinnersAdmin() {
                   className="h-full w-full object-cover"
                 />
 
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-slate-950/80 to-transparent" />
 
                 {/* POSITION */}
 
