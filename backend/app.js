@@ -11,7 +11,7 @@ import supportedByRoutes from "./routes/supportedBy.routes.js";
 import countdownRoutes from "./routes/countdown.routes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import awardRoutes from "./routes/award.routes.js";
-import eventRoutes from "./routes/event.routes.js"
+import eventRoutes from "./routes/event.routes.js";
 import winnerRoutes from "./routes/winnerRoutes.js";
 
 const app = express();
@@ -28,13 +28,22 @@ const limiter = rateLimit({
 app.use("/api", limiter);
 
 // CORS
+const allowedOrigins = [process.env.CLIENT_URL, "http://localhost:5173"];
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
-    credentials: true,
-  })
-);
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
 
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true,
+  }),
+);
 // Body parsing
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
