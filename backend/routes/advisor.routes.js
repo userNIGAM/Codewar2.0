@@ -1,18 +1,18 @@
-// import express from "express";
+import express from "express";
 
-// import {
-//   addAdvisor,
-//   getAdvisors,
-//   getAdvisor,
-//   deleteAdvisor,
-// } from "../controllers/advisor.Controller.js";
+import {
+  addAdvisor,
+  getAdvisors,
+  getAdvisor,
+  deleteAdvisor,
+} from "../controllers/advisor.Controller.js";
 
-// import upload from "../middleware/multer.js";
+import upload from "../middleware/multer.js";
 
-// // If you already have admin authentication:
-// import { protect} from "../middleware/auth.js";
+// If you already have admin authentication:
+import { protect } from "../middleware/auth.js";
 
-// const router = express.Router();
+const router = express.Router();
 
 // // ========================================
 // // PUBLIC
@@ -23,7 +23,6 @@
 
 // // Get single advisor
 // router.get("/:id", getAdvisor);
-
 
 // // ========================================
 // // ADMIN
@@ -49,8 +48,6 @@
 //   deleteAdvisor
 // );
 
-// export default router;
-
 router.post(
   "/",
   (req, res, next) => {
@@ -70,5 +67,7 @@ router.post(
     console.log("Body:", req.body);
     next();
   },
-  addAdvisor
+  addAdvisor,
 );
+
+export default router;
