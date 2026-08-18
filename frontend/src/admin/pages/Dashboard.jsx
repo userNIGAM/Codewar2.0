@@ -11,11 +11,11 @@ export default function Dashboard() {
 
             </h1>
 
-            <p className="text-slate-500 mt-2">
+            <div className="text-slate-500 mt-2">
 
-                Welcome Admin
+                <p className="text-slate-500 mt-2">Welcome Admin</p>
                 <EventDate />
-            </p>
+            </div>
 
         </div>
 

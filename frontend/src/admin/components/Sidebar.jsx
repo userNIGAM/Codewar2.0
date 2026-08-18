@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { Gift } from "lucide-react";
+import { Gift, Trophy, UsersRound } from "lucide-react";
 
 import {
   LayoutDashboard,
@@ -82,6 +82,31 @@ export default function Sidebar() {
         >
           <Gift />
           Awards
+        </NavLink>
+
+
+        <NavLink
+          to="/admin/winners"
+          className={({ isActive }) =>
+            `flex items-center gap-3 p-3 rounded-lg ${
+              isActive ? "bg-cyan-500" : "hover:bg-slate-700"
+            }`
+          }
+        >
+          <Trophy />
+          Winners
+        </NavLink>
+
+          <NavLink
+          to="/admin/advisors"
+          className={({ isActive }) =>
+            `flex items-center gap-3 p-3 rounded-lg ${
+              isActive ? "bg-cyan-500" : "hover:bg-slate-700"
+            }`
+          }
+        >
+          <UsersRound />
+          Advisor
         </NavLink>
 
         <button

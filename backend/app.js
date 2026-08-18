@@ -13,19 +13,13 @@ import { errorHandler } from "./middleware/errorHandler.js";
 import awardRoutes from "./routes/award.routes.js";
 import eventRoutes from "./routes/event.routes.js";
 import winnerRoutes from "./routes/winnerRoutes.js";
+import advisorRoutes from "./routes/advisor.routes.js";
 
 const app = express();
 
 // Security
 app.use(helmet());
 app.use(compression());
-
-// Rate limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-});
-app.use("/api", limiter);
 
 // CORS
 const allowedOrigins = [process.env.CLIENT_URL, "http://localhost:5173"];
@@ -42,8 +36,19 @@ app.use(
       return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
+// Rate limiting
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use("/api/auth/login", loginLimiter);
 // Body parsing
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -59,6 +64,7 @@ app.use("/api/countdown", countdownRoutes);
 app.use("/api/awards", awardRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/winners", winnerRoutes);
+app.use("/api/advisors", advisorRoutes);
 // Health check
 app.get("/health", (req, res) => res.send("OK"));
 

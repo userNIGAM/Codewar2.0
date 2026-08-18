@@ -8,6 +8,7 @@ import SupportedBy from "./pages/SupportedBy";
 import Countdown from "./pages/Countdown";
 import Awards from "./pages/Awards";
 import WinnersAdmin from "./components/Winner";
+import Advisor from "./pages/Advisor";
 
 export default function AdminRoutes() {
   return (
@@ -22,6 +23,7 @@ export default function AdminRoutes() {
         <Route path="countdown" element={<Countdown />} />
         <Route path="awards" element={<Awards />} />
         <Route path="winners" element={<WinnersAdmin />} />
+        <Route path="advisors" element={<Advisor />} />
 
 
       </Route>

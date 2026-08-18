@@ -18,25 +18,17 @@ const positionBadges = {
 
 export default function WinnersAdmin() {
   const [winners, setWinners] = useState([]);
-
   const [loading, setLoading] = useState(true);
-
   const [showForm, setShowForm] = useState(false);
-
   const [editingWinner, setEditingWinner] = useState(null);
-
   const [saving, setSaving] = useState(false);
-
   const [deleting, setDeleting] = useState(null);
-
   const [form, setForm] = useState({
     title: "",
     position: "1",
     image: null,
   });
-
   const [preview, setPreview] = useState(null);
-
   const fileInputRef = useRef(null);
 
   // ====================================
@@ -45,19 +37,14 @@ export default function WinnersAdmin() {
   const fetchWinners = async () => {
     try {
       setLoading(true);
-
       const response = await fetch(`${API_URL}/api/winners`);
-
       const data = await response.json();
-
       if (!response.ok) {
         throw new Error(data.message || "Failed to fetch winners");
       }
-
       setWinners(data.winners || []);
     } catch (error) {
       console.error(error);
-
       toast.error(error.message || "Failed to load winners");
     } finally {
       setLoading(false);
@@ -73,15 +60,12 @@ export default function WinnersAdmin() {
   // ====================================
   const openAddForm = () => {
     setEditingWinner(null);
-
     setForm({
       title: "",
       position: "1",
       image: null,
     });
-
     setPreview(null);
-
     setShowForm(true);
   };
 
@@ -90,7 +74,6 @@ export default function WinnersAdmin() {
   // ====================================
   const openEditForm = (winner) => {
     setEditingWinner(winner);
-
     setForm({
       title: winner.title,
       position: String(winner.position),
@@ -98,7 +81,6 @@ export default function WinnersAdmin() {
     });
 
     setPreview(winner.image?.url || null);
-
     setShowForm(true);
   };
 
@@ -107,7 +89,6 @@ export default function WinnersAdmin() {
   // ====================================
   const closeForm = () => {
     if (saving) return;
-
     setShowForm(false);
     setEditingWinner(null);
     setPreview(null);
@@ -124,7 +105,6 @@ export default function WinnersAdmin() {
   // ====================================
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     setForm((previous) => ({
       ...previous,
       [name]: value,
@@ -136,9 +116,7 @@ export default function WinnersAdmin() {
   // ====================================
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
-
     if (!file) return;
-
     if (!file.type.startsWith("image/")) {
       toast.error("Please select an image");
 
