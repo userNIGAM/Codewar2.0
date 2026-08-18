@@ -1,52 +1,74 @@
-import express from "express";
+// import express from "express";
 
-import {
-  addAdvisor,
-  getAdvisors,
-  getAdvisor,
-  deleteAdvisor,
-} from "../controllers/advisor.Controller.js";
+// import {
+//   addAdvisor,
+//   getAdvisors,
+//   getAdvisor,
+//   deleteAdvisor,
+// } from "../controllers/advisor.Controller.js";
 
-import upload from "../middleware/multer.js";
+// import upload from "../middleware/multer.js";
 
-// If you already have admin authentication:
-import { protect} from "../middleware/auth.js";
+// // If you already have admin authentication:
+// import { protect} from "../middleware/auth.js";
 
-const router = express.Router();
+// const router = express.Router();
 
-// ========================================
-// PUBLIC
-// ========================================
+// // ========================================
+// // PUBLIC
+// // ========================================
 
-// Get all advisors
-router.get("/", getAdvisors);
+// // Get all advisors
+// router.get("/", getAdvisors);
 
-// Get single advisor
-router.get("/:id", getAdvisor);
+// // Get single advisor
+// router.get("/:id", getAdvisor);
 
 
-// ========================================
-// ADMIN
-// ========================================
+// // ========================================
+// // ADMIN
+// // ========================================
 
-// Add advisor
+// // Add advisor
+// router.post(
+//   "/",
+//   protect,
+//   (req, res, next) => {
+//     console.log("✅ POST /api/advisors reached");
+//     console.log("User:", req.user);
+//     next();
+//   },
+//   upload.single("image"),
+//   addAdvisor
+// );
+
+// // Delete advisor
+// router.delete(
+//   "/:id",
+//   protect,
+//   deleteAdvisor
+// );
+
+// export default router;
+
 router.post(
   "/",
+  (req, res, next) => {
+    console.log("🔥 ADVISOR POST ROUTE REACHED");
+    next();
+  },
   protect,
   (req, res, next) => {
-    console.log("✅ POST /api/advisors reached");
+    console.log("🔥 PROTECT PASSED");
     console.log("User:", req.user);
     next();
   },
   upload.single("image"),
+  (req, res, next) => {
+    console.log("🔥 MULTER PASSED");
+    console.log("File:", req.file);
+    console.log("Body:", req.body);
+    next();
+  },
   addAdvisor
 );
-
-// Delete advisor
-router.delete(
-  "/:id",
-  protect,
-  deleteAdvisor
-);
-
-export default router;
