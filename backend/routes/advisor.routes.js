@@ -33,6 +33,11 @@ router.get("/:id", getAdvisor);
 router.post(
   "/",
   protect,
+  (req, res, next) => {
+    console.log("✅ POST /api/advisors reached");
+    console.log("User:", req.user);
+    next();
+  },
   upload.single("image"),
   addAdvisor
 );
